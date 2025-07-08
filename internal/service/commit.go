@@ -19,6 +19,14 @@ func (s *Service) Commit(event model.CommitEvent) error {
 
 	tmpl, _ := template.New("commit").Parse(newCommitTemplate)
 
+	ref := strings.Split(event.Ref, "/")
+	branch := ref[len(ref)-1]
+
+	branchURL := ""
+	if !strings.EqualFold(branch, "main") {
+		branchURL = fmt.Sprintf("%s/tree/%s", event.Repository.HTMLURL, branch)
+	}
+
 	var messageBuf bytes.Buffer
 	tmpl.Execute(&messageBuf, map[string]interface{}{
 		"Repo":       event.Repository.Name,
@@ -26,6 +34,10 @@ func (s *Service) Commit(event model.CommitEvent) error {
 		"PusherID":   event.Pusher.ID,
 		"CommitText": fmt.Sprintf("- [%s](%s)", title, lastCommit.URL),
 		"RepoURL":    event.Repository.HTMLURL,
+
+		//"BranchInfo": ,
+		"Branch":    branch,
+		"branchURL": branchURL,
 	})
 
 	if err := s.telegramClient.SendMessage(s.chatID, s.threadID, messageBuf.String()); err != nil {
