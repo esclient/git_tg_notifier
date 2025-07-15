@@ -10,6 +10,8 @@ import (
 	"github.com/esclient/git_tg_notifier/internal/model"
 )
 
+const CharsToEscape string = "\"\\'"
+
 func (s *Service) Commit(event model.CommitEvent) error {
 	lastCommit := event.Commits[len(event.Commits)-1]
 	title := lastCommit.Message
@@ -27,15 +29,17 @@ func (s *Service) Commit(event model.CommitEvent) error {
 		branchURL = fmt.Sprintf("%s/tree/%s", event.Repository.HTMLURL, branch)
 	}
 
+	commitText := fmt.Sprintf("- [%s](%s)", title, lastCommit.URL)
+	commitText = escapeMarkdown(commitText, CharsToEscape, "\\")
+
 	var messageBuf bytes.Buffer
 	tmpl.Execute(&messageBuf, map[string]interface{}{
 		"Repo":       event.Repository.Name,
 		"Pusher":     event.Pusher.Name,
 		"PusherID":   event.Pusher.ID,
-		"CommitText": fmt.Sprintf("- [%s](%s)", title, lastCommit.URL),
+		"CommitText": commitText,
 		"RepoURL":    event.Repository.HTMLURL,
 
-		//"BranchInfo": ,
 		"Branch":    branch,
 		"branchURL": branchURL,
 	})
@@ -47,4 +51,15 @@ func (s *Service) Commit(event model.CommitEvent) error {
 	}
 
 	return nil
+}
+
+func escapeMarkdown(text string, charsToEscape string, escapeChar string) string {
+	var sb strings.Builder
+	for _, r := range text { 
+		char := string(r); if strings.Contains(charsToEscape, char) { 
+			sb.WriteString(escapeChar) 
+		}
+		sb.WriteString(char) 
+	} 
+	return sb.String()
 }
