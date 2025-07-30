@@ -24,5 +24,22 @@ type Repository struct {
 
 type Pusher struct {
 	Name string `json:"name"`
-	ID   int64  `json:"id"`
+}
+
+type ReviewRequestedEvent struct {
+	Action     string `json:"action"`
+	Repository struct {
+		FullName string `json:"full_name"`
+	} `json:"repository"`
+	PullRequest struct {
+		Number int    `json:"number"`
+		Title  string `json:"title"`
+		User   struct {
+			Login   string `json:"login"`
+			HTMLURL string `json:"html_url"`
+		} `json:"user"`
+		RequestedReviewers []struct {
+			Login string `json:"login"`
+		} `json:"requested_reviewers"`
+	} `json:"pull_request"`
 }

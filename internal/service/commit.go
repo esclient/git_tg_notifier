@@ -35,13 +35,11 @@ func (s *Service) Commit(event model.CommitEvent) error {
 	var messageBuf bytes.Buffer
 	tmpl.Execute(&messageBuf, map[string]interface{}{
 		"Repo":       event.Repository.Name,
-		"Pusher":     event.Pusher.Name,
-		"PusherID":   event.Pusher.ID,
+		"Author":     s.getMention(event.Pusher.Name),
 		"CommitText": commitText,
 		"RepoURL":    event.Repository.HTMLURL,
-
-		"Branch":    branch,
-		"branchURL": branchURL,
+		"Branch":     branch,
+		"branchURL":  branchURL,
 	})
 
 	if err := s.telegramClient.SendMessage(s.chatID, s.threadID, messageBuf.String()); err != nil {
@@ -55,11 +53,12 @@ func (s *Service) Commit(event model.CommitEvent) error {
 
 func escapeMarkdown(text string, charsToEscape string, escapeChar string) string {
 	var sb strings.Builder
-	for _, r := range text { 
-		char := string(r); if strings.Contains(charsToEscape, char) { 
-			sb.WriteString(escapeChar) 
+	for _, r := range text {
+		char := string(r)
+		if strings.Contains(charsToEscape, char) {
+			sb.WriteString(escapeChar)
 		}
-		sb.WriteString(char) 
-	} 
+		sb.WriteString(char)
+	}
 	return sb.String()
 }
