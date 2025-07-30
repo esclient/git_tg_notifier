@@ -14,7 +14,12 @@ func main() {
 	cfg := config.LoadConfig()
 
 	tgClient := telegram.NewClient(cfg.BotToken)
-	service := service.NewService(tgClient, cfg.ChatID, cfg.ThreadID)
+	service := service.NewService(
+		tgClient,
+		cfg.ChatID,
+		cfg.ThreadID,
+		cfg.Members,
+	)
 	handler := handler.NewHandler(service)
 
 	mux := http.NewServeMux()

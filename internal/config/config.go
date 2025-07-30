@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	BotToken string `mapstructure:"TG_BOT_TOKEN"`
-	ChatID   int64  `mapstructure:"CHAT_ID"`
-	ThreadID int64  `mapstructure:"THREAD_ID"`
+	BotToken string           `mapstructure:"TG_BOT_TOKEN"`
+	ChatID   int64            `mapstructure:"CHAT_ID"`
+	ThreadID int64            `mapstructure:"THREAD_ID"`
+	Members  map[string]int64 `mapstructure:"-"`
 }
 
 func LoadConfig() *Config {
@@ -36,9 +37,27 @@ func LoadConfig() *Config {
 	chatID := viper.GetInt64("CHAT_ID")
 	threadID := viper.GetInt64("THREAD_ID")
 
+	names := []string{"SAMU", "ANDR", "VAN", "LSH", "NKT", "JEN", "TIM"}
+	members := make(map[string]int64, len(names))
+	for _, key := range names {
+		envNick := key + "_GITHUB_NICK"
+		envID := key + "_TG_ID"
+
+		if err := viper.BindEnv(envNick); err != nil {
+			log.Fatalf("viper.BindEnv %s error: %v", envNick, err)
+		}
+
+		if err := viper.BindEnv(envID); err != nil {
+			log.Fatalf("viper.BindEnv %s error: %v", envID, err)
+		}
+
+		members[viper.GetString(envNick)] = viper.GetInt64(envID)
+	}
+
 	return &Config{
 		BotToken: tgBotToken,
 		ChatID:   chatID,
 		ThreadID: threadID,
+		Members:  members,
 	}
 }

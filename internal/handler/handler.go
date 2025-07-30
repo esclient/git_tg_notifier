@@ -16,4 +16,5 @@ func NewHandler(service *service.Service) *Handler {
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/commit", h.Commit)
+	mux.HandleFunc("/review_requested", h.ReviewRequested)
 }
