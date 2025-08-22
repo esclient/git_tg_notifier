@@ -2,7 +2,12 @@ module github.com/esclient/git_tg_notifier
 
 go 1.22.1
 
-require github.com/spf13/viper v1.20.1
+require (
+	github.com/google/go-github/v60 v60.0.0
+	github.com/spf13/viper v1.20.1
+)
+
+require github.com/google/go-querystring v1.1.0 // indirect
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect

@@ -9,10 +9,11 @@ import (
 )
 
 type Config struct {
-	BotToken string           `mapstructure:"TG_BOT_TOKEN"`
-	ChatID   int64            `mapstructure:"CHAT_ID"`
-	ThreadID int64            `mapstructure:"THREAD_ID"`
-	Members  map[string]int64 `mapstructure:"-"`
+	TgBotToken  string           `mapstructure:"TG_BOT_TOKEN"`
+	GithubToken string           `mapstructure:"GITHUB_TOKEN"`
+	ChatID      int64            `mapstructure:"CHAT_ID"`
+	ThreadID    int64            `mapstructure:"THREAD_ID"`
+	Members     map[string]int64 `mapstructure:"-"`
 }
 
 func LoadConfig() *Config {
@@ -25,6 +26,10 @@ func LoadConfig() *Config {
 		log.Fatalf("viper.BindEnv TG_BOT_TOKEN error: %v", err)
 	}
 
+	if err := viper.BindEnv("GITHUB_TOKEN"); err != nil {
+		log.Fatalf("viper.BindEnv GITHUB_TOKEN error: %v", err)
+	}
+
 	if err := viper.BindEnv("CHAT_ID"); err != nil {
 		log.Fatalf("viper.BindEnv CHAT_ID error: %v", err)
 	}
@@ -34,6 +39,7 @@ func LoadConfig() *Config {
 	}
 
 	tgBotToken := viper.GetString("TG_BOT_TOKEN")
+	githubToken := viper.GetString("GITHUB_TOKEN")
 	chatID := viper.GetInt64("CHAT_ID")
 	threadID := viper.GetInt64("THREAD_ID")
 
@@ -55,9 +61,10 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		BotToken: tgBotToken,
-		ChatID:   chatID,
-		ThreadID: threadID,
-		Members:  members,
+		TgBotToken:  tgBotToken,
+		GithubToken: githubToken,
+		ChatID:      chatID,
+		ThreadID:    threadID,
+		Members:     members,
 	}
 }
