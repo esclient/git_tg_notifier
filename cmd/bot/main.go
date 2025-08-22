@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/esclient/git_tg_notifier/internal/config"
+	"github.com/esclient/git_tg_notifier/internal/github"
 	"github.com/esclient/git_tg_notifier/internal/handler"
 	"github.com/esclient/git_tg_notifier/internal/service"
 	"github.com/esclient/git_tg_notifier/internal/telegram"
@@ -13,9 +14,11 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
-	tgClient := telegram.NewClient(cfg.BotToken)
+	tgClient := telegram.NewClient(cfg.TgBotToken)
+	ghClient := github.NewClient(cfg.GithubToken)
 	service := service.NewService(
 		tgClient,
+		ghClient,
 		cfg.ChatID,
 		cfg.ThreadID,
 		cfg.Members,

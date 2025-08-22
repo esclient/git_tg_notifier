@@ -13,3 +13,15 @@ const reviewRequestedTemplate = `🔔 *Новый запрос ревью* 🚀
 🏷️ *Название:* {{.Title}}
 👥 *Ревьюверы:* {{.Reviewers}}
 🔗 [Открыть PR]({{.PRURL}})`
+
+const workflowFailedTemplate = `🚨 Ошибка в GitHub Actions! 🚨
+👤 *Запустил*: {{.Sender}}
+🔧 *Репозиторий*: [{{.Project}}]({{.RepoURL}})
+{{- if .ShowPR }}
+🔀 *Pull Request*: [{{.PRTitle}}]({{.PRURL}})
+{{- else }}
+🏷️ *Ветка*: {{.Branch}}
+{{- end }}
+⚠️ *Проблемная джоба*: ` + "`" + `{{.JobName}}` + "`" + `
+🔗 [Открыть Workflow]({{.WorkflowURL}})
+`

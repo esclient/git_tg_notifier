@@ -43,3 +43,30 @@ type ReviewRequestedEvent struct {
 		} `json:"requested_reviewers"`
 	} `json:"pull_request"`
 }
+
+type WorkflowFailedEvent struct {
+	Action      string      `json:"action"`
+	WorkflowJob WorkflowJob `json:"workflow_job"`
+	Repository  struct {
+		FullName string `json:"full_name"`
+		HTMLURL  string `json:"html_url"`
+	} `json:"repository"`
+	Sender struct {
+		Login string `json:"login"`
+	} `json:"sender"`
+}
+
+type WorkflowJob struct {
+	WorkflowName string         `json:"workflow_name"`
+	HeadBranch   string         `json:"head_branch"`
+	HeadSHA      string         `json:"head_sha"`
+	HTMLURL      string         `json:"html_url"`
+	Conclusion   string         `json:"conclusion"`
+	Name         string         `json:"name"`
+	Steps        []WorkflowStep `json:"steps"`
+}
+
+type WorkflowStep struct {
+	Name       string `json:"name"`
+	Conclusion string `json:"conclusion"`
+}
